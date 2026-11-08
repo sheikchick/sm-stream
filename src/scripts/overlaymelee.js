@@ -232,6 +232,18 @@ function loadChanges() {
 		},
 		timeout: 5000
 	})
+	$.ajax({
+		type: 'GET',
+		url: "/status",
+		data: {},
+		success: function (response) {
+			
+		},
+		error: function (response) {
+			console.log(response)
+		},
+		timeout: 5000
+	})
 	if (obs !== null) {
 		getRecordStatus();
 	}

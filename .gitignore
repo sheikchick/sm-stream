@@ -62,3 +62,4 @@ data/database-filters/**
 data/json/tournaments/*
 !data/json/tournaments/sm-test/
 log.txt
+tournaments/**

@@ -3,9 +3,9 @@ const os = require('os');
 const { readFile, writeFile } = require("fs/promises");
 const logging = require("./logging");
 
-const TOURNAMENTSETS = 
+const TOURNAMENTSETS =
 
-exports.MELEE = 'melee.json';
+    exports.MELEE = 'melee.json';
 exports.CREWS = 'crews.json';
 exports.CURRENTSET = 'current-set.json';
 exports.MATCHRESULT = 'match-result.json';
@@ -52,11 +52,11 @@ exports.updateTournament = async (data, index, tournamentFilename) => {
             writeFile(jsonFile, JSON.stringify(parsedFile), FORMAT).then(() => {
                 logging.log(`Modified match data "${data.team1.names[0]} vs ${data.team2.names[0]}" in /${tournamentPath}/`)
             })
-            .catch((e) => {
-                const message = `Failed to write ${jsonFile}: ${e}`;
-                console.error(message)
-                throw new Error(message);
-            });
+                .catch((e) => {
+                    const message = `Failed to write ${jsonFile}: ${e}`;
+                    console.error(message)
+                    throw new Error(message);
+                });
         })
         .catch(() => {
             const message = `File ${jsonFile} doesn't exist`;
@@ -65,20 +65,33 @@ exports.updateTournament = async (data, index, tournamentFilename) => {
         });
 };
 
+/**
+ * Check Slippi directory vs. what directory the program is pointing to.Returns
+ * 0: Invalid directory
+ * 1: Valid Spectator directory
+ * 2: Valid Root directory
+ */
 exports.compareDirectory = (dir) => {
     return readFile(path.join(os.homedir(), "AppData", "Roaming", "Slippi Launcher", "Settings"))
         .then((readFile) => {
             var slippiSettings = JSON.parse(readFile)
-            dir = dir.replaceAll("/", "\\")
-            if(dir.startsWith(slippiSettings.settings.rootSlpPath))
-                return true
-            if(dir.startsWith(slippiSettings.settings.spectateSlpPath))
-                return true
-            for(let connection of slippiSettings.connections) {
-                if(dir.startsWith(connection.folderPath))
-                    return true
+            var ret = {
+                "directoryStatus": 0,
+                "rootSlpPath": slippiSettings.settings.rootSlpPath,
+                "spectateSlpPath": slippiSettings.settings.spectateSlpPath
             }
-            return false
+            dir = dir.replaceAll("/", "\\")
+            if (dir.startsWith(ret.spectateSlpPath) && (ret.rootSlpPath !== ret.spectateSlpPath)) {
+                ret.directoryStatus = 1
+                return ret
+            }
+            if (slippiSettings.connections.some((c) => dir.startsWith(c.folderPath))) {
+                ret.directoryStatus = 1
+                return ret
+            }
+            if (dir.startsWith(ret.rootSlpPath))
+                ret.directoryStatus = 1
+            return ret
         })
 }
 
@@ -159,7 +172,7 @@ exports.fixMeleeJSON = (info) => {
             "setId": info?.startgg?.setId || "",
             "startggSwapped": info?.startgg?.startggSwapped || false,
         },
-        "seatOrdering": info?.seatOrdering || [ "1","2","3","4" ],
+        "seatOrdering": info?.seatOrdering || ["1", "2", "3", "4"],
         "round": info?.round || "",
         "tournament": info?.tournament || "",
         "isDoubles": info?.isDoubles || false,
@@ -172,34 +185,34 @@ exports.fixMeleeJSON = (info) => {
 exports.fixCrews = (crew) => {
     let newCrews = {
         "crew1": {
-			"name": crew?.crew1?.name || "Crew 1",
-			"activePlayer": {
-				"name": crew?.crew1?.activePlayer?.name || "Player 1",
-				"character": crew?.crew1?.activePlayer?.character || "fox",
-				"colour": crew?.crew1?.activePlayer?.colour || "red",
+            "name": crew?.crew1?.name || "Crew 1",
+            "activePlayer": {
+                "name": crew?.crew1?.activePlayer?.name || "Player 1",
+                "character": crew?.crew1?.activePlayer?.character || "fox",
+                "colour": crew?.crew1?.activePlayer?.colour || "red",
                 "prefix": crew?.crew1?.activePlayer?.prefix || "",
-				"pronouns": crew?.crew1?.activePlayer?.pronouns || "",
-				"country": crew?.crew1?.activePlayer?.country || "UK",
-				"port": crew?.crew1?.activePlayer?.port || 1
-			},
+                "pronouns": crew?.crew1?.activePlayer?.pronouns || "",
+                "country": crew?.crew1?.activePlayer?.country || "UK",
+                "port": crew?.crew1?.activePlayer?.port || 1
+            },
             "players": [
                 {
                     "name": crew?.crew1?.players?.[0]?.name || "Player 1",
                     "alive": crew?.crew1?.players?.[0]?.alive || true
                 },
-				{
+                {
                     "name": crew?.crew1?.players?.[1]?.name || "Player 2",
                     "alive": crew?.crew1?.players?.[1]?.alive || true
                 },
-				{
+                {
                     "name": crew?.crew1?.players?.[2]?.name || "Player 3",
                     "alive": crew?.crew1?.players?.[2]?.alive || true
                 },
-				{
+                {
                     "name": crew?.crew1?.players?.[3]?.name || "Player 4",
                     "alive": crew?.crew1?.players?.[3]?.alive || true
                 },
-				{
+                {
                     "name": crew?.crew1?.players?.[4]?.name || "Player 5",
                     "alive": crew?.crew1?.players?.[4]?.alive || true
                 }
@@ -207,34 +220,34 @@ exports.fixCrews = (crew) => {
             "score": crew?.crew1?.score || 0,
         },
         "crew2": {
-			"name": crew?.crew2?.name || "Crew 2",
-			"activePlayer": {
-				"name": crew?.crew2?.activePlayer?.name || "Player 1",
-				"character": crew?.crew2?.activePlayer?.character || "fox",
-				"colour": crew?.crew2?.activePlayer?.colour || "red",
+            "name": crew?.crew2?.name || "Crew 2",
+            "activePlayer": {
+                "name": crew?.crew2?.activePlayer?.name || "Player 1",
+                "character": crew?.crew2?.activePlayer?.character || "fox",
+                "colour": crew?.crew2?.activePlayer?.colour || "red",
                 "prefix": crew?.crew2?.activePlayer?.prefix || "",
-				"pronouns": crew?.crew2?.activePlayer?.pronouns || "",
-				"country": crew?.crew2?.activePlayer?.country || "UK",
-				"port": crew?.crew2?.activePlayer?.port || 1
-			},
+                "pronouns": crew?.crew2?.activePlayer?.pronouns || "",
+                "country": crew?.crew2?.activePlayer?.country || "UK",
+                "port": crew?.crew2?.activePlayer?.port || 1
+            },
             "players": [
                 {
                     "name": crew?.crew2?.players?.[0]?.name || "Player 1",
                     "alive": crew?.crew2?.players?.[0]?.alive || true
                 },
-				{
+                {
                     "name": crew?.crew2?.players?.[1]?.name || "Player 2",
                     "alive": crew?.crew2?.players?.[1]?.alive || true
                 },
-				{
+                {
                     "name": crew?.crew2?.players?.[2]?.name || "Player 3",
                     "alive": crew?.crew2?.players?.[2]?.alive || true
                 },
-				{
+                {
                     "name": crew?.crew2?.players?.[3]?.name || "Player 4",
                     "alive": crew?.crew2?.players?.[3]?.alive || true
                 },
-				{
+                {
                     "name": crew?.crew2?.players?.[4]?.name || "Player 5",
                     "alive": crew?.crew2?.players?.[4]?.alive || true
                 }
@@ -251,7 +264,7 @@ exports.fixCrews = (crew) => {
                 "pronouns": crew?.casters?.[1].pronouns || "",
             }
         ],
-        "seatOrdering": info?.seatOrdering || [ "1","2","3","4" ],
+        "seatOrdering": info?.seatOrdering || ["1", "2", "3", "4"],
         "round": info?.round || "",
         "tournament": info?.tournament || ""
     }

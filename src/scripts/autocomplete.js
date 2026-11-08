@@ -103,8 +103,6 @@ function autocompleteListneners() {
     $(".name.change").on("click", function(el) {
         showResults(`${el.target.id.split("-")[0]}-autofill`, el.target.value)
     });
-
-
 }
 
 function autocompleteMatch(input) {

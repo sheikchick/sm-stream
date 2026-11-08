@@ -213,18 +213,22 @@ exports.gameStart = async (path) => {
         teams.forEach(([p1, p2 = {}], index) => {
             p1Data = slpTools.getCharacter(p1);
             p2Data = slpTools.getCharacter(p2);
-
             info[`team${index + 1}`].players[0] = {
                 ...info[`team${index + 1}`].players[0],
                 ...p1Data,
                 port: p1.port
             };
             if (settings.players.length === 4) {
+                info.isDoubles = true
                 info[`team${index + 1}`].players[1] = {
                     ...info[`team${index + 1}`].players[1],
                     ...p2Data,
                     port: p2.port
                 };
+                //TODO: send isDoubles indicator
+            } else {
+                info.isDoubles = false
+                //TODO: send isDoubles indicator
             }
         });
     }
@@ -250,13 +254,13 @@ exports.gameMid = async ({ game, settings, teams }) => {
     try {
         if (teams?.length === 2) {
             const playersLatestFrame = game.getLatestFrame()?.players;
-            if(!playersLatestFrame) {
+            if (!playersLatestFrame) {
                 logging.warn("Warning in gameMid - game.getLatestFrame() failed")
                 return
             }
             const info = await readData(MELEE);
             if (info.round === this.CREWS) {
-                //handle lowering of score
+                //TODO: handle lowering of score
             }
             teams.forEach(([p, pd = {}], index) => {
                 p1char = slpTools.getLatestCharacter(p, playersLatestFrame)
@@ -267,8 +271,8 @@ exports.gameMid = async ({ game, settings, teams }) => {
                 if (p2char === "zelda" || p2char === "sheik") {
                     sheikZeldaPlaytime[`team${index + 1}`][1][p2char] += 1;
                 }
-                info[`team${index + 1}`].players[0].character = p1char
-                info[`team${index + 1}`].players[1].character = p2char
+                if(p1char) info[`team${index + 1}`].players[0].character = p1char
+                if(p2char) info[`team${index + 1}`].players[1].character = p2char
             });
             return writeData(MELEE, info);
         }

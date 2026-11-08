@@ -6,6 +6,8 @@ const path = require('path');
 exports.DBDIRECTORY = "data/";
 exports.FILTERSDIRECTORY = "data/database-filters/";
 
+
+//TODO: port to better-sqlite3
 const db = new sqlite3.Database(path.join(this.DBDIRECTORY, 'database.db'));
 
 db.run(`

@@ -79,6 +79,12 @@ app.post("/update-melee-crews", (req, res) => {
         });
 });
 
+app.all("/status", (req, res) => {
+    res.send({
+        "slpFolderStatus": ""
+    })
+});
+
 // Endpoints for files in /views/layouts
 
 fs.readdir(layoutsDir, { withFileTypes: true }).then((files) => {
@@ -121,7 +127,7 @@ function guiData(data) {
 
 // endpoints for overlays in /views/overlay
 
-/*const overlayDir = path.join(__dirname, 'views', 'overlay');
+const overlayDir = path.join(__dirname, '..', 'tournaments');
 fs.readdir(overlayDir, {withFileTypes: true}).then((overlays) => {
     const html = '.html'
     overlays
@@ -138,9 +144,14 @@ fs.readdir(overlayDir, {withFileTypes: true}).then((overlays) => {
                         app.get(`/${currentOverlay}/${name}`, (req, res) => {
                             res.sendFile(filePath);
                         });
-                    })
+                    });
+                
+                const static = f.find((f) => f.isDirectory() && f.name === 'static');
+                if (static) {
+                    app.use(`/${currentOverlay}/static`, express.static(path.join(currentDir, static.name)));
+                }
             });
-})});*/
+})});
 
 // endpoints for data in /data/json
 
